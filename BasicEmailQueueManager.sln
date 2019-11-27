@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicEmailQueueManager", "BasicEmailQueueManager\BasicEmailQueueManager.csproj", "{45B8DB90-52BB-428A-BDFF-4BE77F4CC274}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45B8DB90-52BB-428A-BDFF-4BE77F4CC274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45B8DB90-52BB-428A-BDFF-4BE77F4CC274}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45B8DB90-52BB-428A-BDFF-4BE77F4CC274}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45B8DB90-52BB-428A-BDFF-4BE77F4CC274}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CBF45AF-835E-4EB0-B97B-1C08941DB9E1}
+	EndGlobalSection
+EndGlobal
