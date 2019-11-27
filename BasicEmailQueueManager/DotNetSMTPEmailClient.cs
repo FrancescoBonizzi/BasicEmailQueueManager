@@ -29,11 +29,24 @@ namespace BasicEmailQueueManager
 
         public void Send(Email email)
         {
-            _client.Send(
-                from: email.From,
-                recipients: email.Recipients,
-                subject: email.Subject,
-                body: email.Body);
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(email.From),
+                Subject = email.Subject,
+                Body = email.Body
+            };
+
+            foreach (var toAddress in email.To)
+            {
+                mailMessage.To.Add(toAddress);
+            }
+
+            foreach (var ccAddress in email.Cc)
+            {
+                mailMessage.CC.Add(ccAddress);
+            }
+
+            _client.Send(mailMessage);
         }
     }
 }

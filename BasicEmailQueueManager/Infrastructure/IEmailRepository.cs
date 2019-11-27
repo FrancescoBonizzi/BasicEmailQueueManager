@@ -14,7 +14,7 @@ namespace BasicEmailQueueManager.Infrastructure
         Task Enqueue(params Email[] email);
 
         /// <summary>
-        /// Dequeues a maximum of <paramref name="count"/> emails or all
+        /// Dequeues a maximum of <paramref name="count"/> emails or all to be sent
         /// if the parameter is not set
         /// </summary>
         /// <param name="count"></param>
