@@ -24,31 +24,48 @@ namespace BasicEmailQueueManager
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public async Task ProcessEmails(
+        /// <summary>
+        /// Starts a loop that with every <see cref="IConfiguration.RunInterval"/> interval 
+        /// checks if there are some email to send and sends them.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task RunEmailProcessing(
             CancellationToken cancellationToken)
         {
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var emailsToSend = await _emailQueueRepository.Dequeue();
-
-                foreach (var email in emailsToSend)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    try
-                    {
-                        _emailClient.Send(email);
-                        await _emailQueueRepository.SetSent(email.EmailId.Value);
-                    }
-                    catch (Exception ex)
-                    {
-                        await _emailQueueRepository.SetInError(email.EmailId.Value);
-                        await _logger.LogError($"Failed to send emailId: {email.EmailId}", ex);
-                    }
-                }
-
+                await RunEmailProcessingSingleStep(cancellationToken);
                 await Task.Delay(_configuration.RunInterval, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Checks one time if there are some email to send and sends them.
+        /// Use this method if you want to manage manually each run.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task RunEmailProcessingSingleStep(
+            CancellationToken cancellationToken)
+        {
+            var emailsToSend = await _emailQueueRepository.Dequeue();
+
+            foreach (var email in emailsToSend)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                try
+                {
+                    _emailClient.Send(email);
+                    await _emailQueueRepository.SetSent(email.EmailId.Value);
+                }
+                catch (Exception ex)
+                {
+                    await _emailQueueRepository.SetInError(email.EmailId.Value);
+                    await _logger.LogError($"Failed to send emailId: {email.EmailId}", ex);
+                }
             }
         }
 

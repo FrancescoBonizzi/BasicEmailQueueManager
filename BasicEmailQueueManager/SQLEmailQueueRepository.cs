@@ -10,6 +10,9 @@ namespace BasicEmailQueueManager
     {
         public Task<IEnumerable<Email>> Dequeue(int? count = null)
         {
+            // TODO Secondo me ci va messo anche lo stato "invio in corso" così è multithread
+            // basta mettere in stato "in progress" quelle di cui faccio dequeue tramite DB in transazione
+
             throw new NotImplementedException();
         }
 
