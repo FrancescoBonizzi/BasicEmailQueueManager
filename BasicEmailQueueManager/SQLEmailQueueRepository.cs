@@ -13,6 +13,8 @@ namespace BasicEmailQueueManager
             // TODO Secondo me ci va messo anche lo stato "invio in corso" così è multithread
             // basta mettere in stato "in progress" quelle di cui faccio dequeue tramite DB in transazione
 
+            // Faccio update where to send e metto in una tabella gli id risultanti
+
             throw new NotImplementedException();
         }
 

@@ -36,7 +36,7 @@ namespace BasicEmailQueueManager
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await RunEmailProcessingSingleStep(cancellationToken);
+                await RunEmailProcessingStep(cancellationToken);
                 await Task.Delay(_configuration.RunInterval, cancellationToken);
             }
         }
@@ -47,7 +47,7 @@ namespace BasicEmailQueueManager
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task RunEmailProcessingSingleStep(
+        public async Task RunEmailProcessingStep(
             CancellationToken cancellationToken)
         {
             var emailsToSend = await _emailQueueRepository.Dequeue();
