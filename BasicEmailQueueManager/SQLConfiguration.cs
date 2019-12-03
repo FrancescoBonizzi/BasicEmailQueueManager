@@ -6,7 +6,6 @@ namespace BasicEmailQueueManager
 {
     public class SQLConfiguration : IConfiguration
     {
-        public string MyProperty { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool EnableSsl { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool UseDefaultCredentials { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Host { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
