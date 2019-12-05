@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Security;
 
 namespace BasicEmailQueueManager.Infrastructure
 {
     public interface IConfiguration
     {
-        bool EnableSsl { get; set; }
-        bool UseDefaultCredentials { get; set; }
-        string Host { get; set; }
-        int Port { get; set; }
-        string UserName { get; set; }
-        SecureString Password { get; set; }
-
-        TimeSpan RunInterval { get; set; }
-
+        bool EnableSsl { get; }
+        bool UseDefaultCredentials { get; }
+        string Host { get; }
+        int Port { get; }
+        string UserName { get; }
+        string Password { get; }
+        TimeSpan RunInterval { get; }
     }
 }

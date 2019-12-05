@@ -36,12 +36,12 @@ namespace BasicEmailQueueManager
                 Body = email.Body
             };
 
-            foreach (var toAddress in email.To)
+            foreach (var toAddress in email.To.Split(","))
             {
                 mailMessage.To.Add(toAddress);
             }
 
-            foreach (var ccAddress in email.Cc)
+            foreach (var ccAddress in email.Cc.Split(","))
             {
                 mailMessage.CC.Add(ccAddress);
             }

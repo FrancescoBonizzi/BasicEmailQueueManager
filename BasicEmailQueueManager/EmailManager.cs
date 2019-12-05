@@ -1,8 +1,8 @@
 ﻿using BasicEmailQueueManager.Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-
 namespace BasicEmailQueueManager
 {
     public class EmailManager
@@ -11,7 +11,6 @@ namespace BasicEmailQueueManager
         private readonly IEmailRepository _emailQueueRepository;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-
         public EmailManager(
             IEmailClient emailClient,
             IEmailRepository emailQueueRepository,
@@ -23,7 +22,6 @@ namespace BasicEmailQueueManager
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
-
         /// <summary>
         /// Starts a loop that with every <see cref="IConfiguration.RunInterval"/> interval 
         /// checks if there are some email to send and sends them.
@@ -36,7 +34,19 @@ namespace BasicEmailQueueManager
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                await RunEmailProcessingStep(cancellationToken);
+                try
+                {
+                    await RunEmailProcessingStep(cancellationToken);
+                }
+                catch(AggregateException exceptions)
+                {
+                    await _logger.LogError(exceptions);
+                    foreach (var exception in exceptions.InnerExceptions)
+                        await _logger.LogError(exception);
+                    
+                    // Don't rethrow to keep the "service" running
+                }
+
                 await Task.Delay(_configuration.RunInterval, cancellationToken);
             }
         }
@@ -51,23 +61,34 @@ namespace BasicEmailQueueManager
             CancellationToken cancellationToken)
         {
             var emailsToSend = await _emailQueueRepository.Dequeue();
+            int sentEmailsCount = 0;
+            var aggregateExceptions = new List<Exception>();
 
             foreach (var email in emailsToSend)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-
                 try
                 {
                     _emailClient.Send(email);
-                    await _emailQueueRepository.SetSent(email.EmailId.Value);
+                    await _emailQueueRepository.SetSent(email.EmailId);
+                    ++sentEmailsCount;
                 }
                 catch (Exception ex)
                 {
-                    await _emailQueueRepository.SetInError(email.EmailId.Value);
+                    await _emailQueueRepository.SetInError(email.EmailId);
                     await _logger.LogError($"Failed to send emailId: {email.EmailId}", ex);
+                    aggregateExceptions.Add(ex);
                 }
             }
-        }
 
+            await _logger.LogInformation($"Sent: {sentEmailsCount} emails");
+
+            if (aggregateExceptions.Count > 0)
+            {
+                throw new AggregateException(
+                    $"Couldn't send {aggregateExceptions.Count} emails",
+                    aggregateExceptions);
+            }
+        }
     }
 }

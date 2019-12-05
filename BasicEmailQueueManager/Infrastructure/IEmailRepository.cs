@@ -9,9 +9,9 @@ namespace BasicEmailQueueManager.Infrastructure
         /// <summary>
         /// Enqueues a set of emails in a single operation
         /// </summary>
-        /// <param name="email"></param>
+        /// <param name="newEmail"></param>
         /// <returns></returns>
-        Task Enqueue(params Email[] email);
+        Task Enqueue(NewEmail newEmail);
 
         /// <summary>
         /// Dequeues a maximum of <paramref name="count"/> emails or all to be sent
