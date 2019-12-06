@@ -1,4 +1,5 @@
-﻿using BasicEmailQueueManager.Infrastructure;
+﻿using BasicEmailQueueManager.Domain;
+using BasicEmailQueueManager.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -11,6 +12,7 @@ namespace BasicEmailQueueManager
         private readonly IEmailRepository _emailQueueRepository;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+
         public EmailManager(
             IEmailClient emailClient,
             IEmailRepository emailQueueRepository,
@@ -22,6 +24,15 @@ namespace BasicEmailQueueManager
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
+
+        /// <summary>
+        /// Enqueue an email
+        /// </summary>
+        /// <param name="newEmail"></param>
+        /// <returns></returns>
+        public Task Enqueue(NewEmail newEmail)
+             => _emailQueueRepository.Enqueue(newEmail);
+
         /// <summary>
         /// Starts a loop that with every <see cref="IConfiguration.RunInterval"/> interval 
         /// checks if there are some email to send and sends them.
@@ -29,21 +40,22 @@ namespace BasicEmailQueueManager
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async Task RunEmailProcessing(
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            int emailNumberPerBatch)
         {
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
-                    await RunEmailProcessingStep(cancellationToken);
+                    await RunEmailProcessingStep(cancellationToken, emailNumberPerBatch);
                 }
-                catch(AggregateException exceptions)
+                catch (AggregateException exceptions)
                 {
                     await _logger.LogError(exceptions);
                     foreach (var exception in exceptions.InnerExceptions)
                         await _logger.LogError(exception);
-                    
+
                     // Don't rethrow to keep the "service" running
                 }
 
@@ -58,9 +70,10 @@ namespace BasicEmailQueueManager
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public async Task RunEmailProcessingStep(
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            int emailNumberPerBatch)
         {
-            var emailsToSend = await _emailQueueRepository.Dequeue();
+            var emailsToSend = await _emailQueueRepository.Dequeue(emailNumberPerBatch);
             int sentEmailsCount = 0;
             var aggregateExceptions = new List<Exception>();
 
@@ -69,7 +82,7 @@ namespace BasicEmailQueueManager
                 cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
-                    _emailClient.Send(email);
+                    await _emailClient.Send(email);
                     await _emailQueueRepository.SetSent(email.EmailId);
                     ++sentEmailsCount;
                 }

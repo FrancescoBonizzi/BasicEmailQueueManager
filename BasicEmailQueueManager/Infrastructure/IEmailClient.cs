@@ -5,6 +5,6 @@ namespace BasicEmailQueueManager.Infrastructure
 {
     public interface IEmailClient
     {
-        void Send(Email email);
+        Task Send(Email email);
     }
 }

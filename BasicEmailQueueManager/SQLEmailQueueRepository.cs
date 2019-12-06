@@ -20,41 +20,29 @@ namespace BasicEmailQueueManager
             _connectionString = connectionString;
         }
 
-        public async Task<IEnumerable<Email>> Dequeue(int? count = null)
+        public async Task<IEnumerable<Email>> Dequeue(int count)
         {
-            var countQuery = count == null
-                ? string.Empty
-                : $"TOP({count.Value})";
-
             using (var connection = new SqlConnection(_connectionString))
             {
+
                 await connection.OpenAsync();
                 return await connection.QueryAsync<Email>(
-                   @$"WITH CTE_EmailToSend
-                    AS
-                    (
-                        SELECT {countQuery}
-                            EmailId,
-                            [Status],
-                            CreationDate,
-                            LastUpdateDate,
-                            Body,
-                            [Subject],
-                            [From],
-                            [To],
-                            [Cc]
-                        FROM [EmailQueueManager].[Email]
-                        WHERE [Status] = @newStatus
-                        ORDER BY EmailId ASC
-                    )
-                    UPDATE CTE_EmailToSend
-                    SET[Status] = @processingStatus
-                    OUTPUT INSERTED.* ",
+                   @$"  UPDATE EmailQueueManager.Email
+                        SET [Status] = @processingStatus, LastUpdateDate = @lastUpdateDate
+                        OUTPUT INSERTED.*
+                        FROM 
+                        (
+                            SELECT TOP {count} EmailId 
+                            FROM EmailQueueManager.Email 
+                            WHERE [Status] = @newStatus
+                            ORDER BY EmailId ASC
+                        ) AS DequeuedEmails
+                        WHERE EmailQueueManager.Email.EmailId = DequeuedEmails.EmailId",
                    new
-                   { 
-                       processingStatus = (byte)Statuses.Processing, 
-                       newStatus = (byte)Statuses.Processing,
-                       count
+                   {
+                       processingStatus = (byte)Statuses.Processing,
+                       newStatus = (byte)Statuses.New,
+                       lastUpdateDate = DateTimeOffset.Now
                    });
             }
         }
@@ -66,7 +54,7 @@ namespace BasicEmailQueueManager
                 await connection.OpenAsync();
                 await connection.ExecuteAsync(
                     "INSERT INTO EmailQueueManager.Email " +
-                    "(Status, CreationDate, LastUpdateDate, Body, Subject, From, To, Cc) " +
+                    "([Status], [CreationDate], [LastUpdateDate], [Body], [Subject], [From], [To], [Cc]) " +
                     "VALUES " +
                     "(@statusId, @CreationDate, @LastUpdateDate, @Body, @Subject, @From, @To, @Cc)",
                     new
@@ -90,9 +78,9 @@ namespace BasicEmailQueueManager
                 await connection.OpenAsync();
                 await connection.ExecuteAsync(
                     "UPDATE EmailQueueManager.Email " +
-                    "SET Status = @statusId " +
+                    "SET Status = @statusId, LastUpdateDate = @lastUpdateDate " +
                     "WHERE EmailId = @emailId",
-                    new { emailId, statusId = (byte)Statuses.Error });
+                    new { emailId, statusId = (byte)Statuses.Error, lastUpdateDate = DateTimeOffset.Now });
             }
         }
 
@@ -103,9 +91,9 @@ namespace BasicEmailQueueManager
                 await connection.OpenAsync();
                 await connection.ExecuteAsync(
                     "UPDATE EmailQueueManager.Email " +
-                    "SET Status = @statusId " +
+                    "SET Status = @statusId, LastUpdateDate = @lastUpdateDate " +
                     "WHERE EmailId = @emailId",
-                    new { emailId, statusId = (byte)Statuses.Sent });
+                    new { emailId, statusId = (byte)Statuses.Sent, lastUpdateDate = DateTimeOffset.Now });
             }
         }
     }

@@ -42,6 +42,6 @@ CREATE TABLE [EmailQueueManager].[Email]
 GO
 
 -- DEQUEUE "FRIENDLY" INDEX
-CREATE NONCLUSTERED INDEX [IX_EmailQueueManager_Dequeue] ON [EmailQueueManager].[Email] ([Status]);
+CREATE NONCLUSTERED INDEX [IX_EmailQueueManager_Dequeue] ON [EmailQueueManager].[Email] ([Status]) WHERE [Status] = 0;
 
 GO

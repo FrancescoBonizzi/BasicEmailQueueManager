@@ -16,7 +16,7 @@ namespace Playground
 
         public string UserName => throw new NotImplementedException();
 
-        public SecureString Password => throw new NotImplementedException();
+        public string Password => throw new NotImplementedException();
 
         public TimeSpan RunInterval => TimeSpan.FromSeconds(10);
     }

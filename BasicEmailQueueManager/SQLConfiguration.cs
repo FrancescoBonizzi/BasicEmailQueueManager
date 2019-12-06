@@ -16,7 +16,7 @@ namespace BasicEmailQueueManager
         public int Port => ConvertToInt32(GetValueOrThrow("Port"));
         public string UserName => GetValueOrThrow("UserName");
         public string Password => GetValueOrThrow("Password");
-        public TimeSpan RunInterval => ConvertToTimeSpan(GetValueOrThrow("RunInterval"));
+        public TimeSpan RunInterval => ConvertToTimeSpan(GetValueOrThrow("RunIntervalSeconds"));
 
         public SQLConfiguration(string connectionString)
         {
@@ -34,8 +34,8 @@ namespace BasicEmailQueueManager
                 var value = connection.QueryFirstOrDefault<string>(
                     "SELECT Value " +
                     "FROM EmailQueueManager.Configuration " +
-                    "WHERE Key = @key",
-                    key);
+                    "WHERE [Key] = @key",
+                    new { key });
 
                 if (value == null)
                     throw new MissingConfigurationException(key);
@@ -62,16 +62,16 @@ namespace BasicEmailQueueManager
             return convertedValue;
         }
 
-        private TimeSpan ConvertToTimeSpan(string value)
+        private TimeSpan ConvertToTimeSpan(string secondsValue)
         {
             try
             {
-                var intConvertedValue = ConvertToInt32(value);
+                var intConvertedValue = ConvertToInt32(secondsValue);
                 return TimeSpan.FromSeconds(intConvertedValue);
             }
             catch (FormatException)
             {
-                throw new FormatException($"'{value}' cannot be converted to a 32 bit integer to represent 'seconds'");
+                throw new FormatException($"'{secondsValue}' cannot be converted to a 32 bit integer to represent 'seconds'");
             }
         }
     }

@@ -14,12 +14,12 @@ namespace BasicEmailQueueManager.Infrastructure
         Task Enqueue(NewEmail newEmail);
 
         /// <summary>
-        /// Dequeues a maximum of <paramref name="count"/> emails or all to be sent
+        /// Dequeues a maximum of <paramref name="count"/> emails
         /// if the parameter is not set
         /// </summary>
         /// <param name="count"></param>
         /// <returns></returns>
-        Task<IEnumerable<Email>> Dequeue(int? count = null);
+        Task<IEnumerable<Email>> Dequeue(int count);
 
         /// <summary>
         /// Sets the email as sent

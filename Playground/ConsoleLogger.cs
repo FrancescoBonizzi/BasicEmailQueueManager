@@ -22,5 +22,19 @@ namespace Playground
             Console.ForegroundColor = ConsoleColor.White;
             return Task.CompletedTask;
         }
+
+        public Task LogError(string error, [CallerMemberName] string caller = null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"{caller}: {error}");
+            Console.ForegroundColor = ConsoleColor.White;
+            return Task.CompletedTask;
+        }
+
+        public Task LogInformation(string message, [CallerMemberName] string caller = null)
+        {
+            Console.WriteLine($"{caller}: {message}");
+            return Task.CompletedTask;
+        }
     }
 }

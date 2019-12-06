@@ -2,6 +2,7 @@
 using BasicEmailQueueManager.Infrastructure;
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace BasicEmailQueueManager
 {
@@ -27,7 +28,7 @@ namespace BasicEmailQueueManager
             }
         }
 
-        public void Send(Email email)
+        public async Task Send(Email email)
         {
             var mailMessage = new MailMessage
             {
@@ -46,7 +47,7 @@ namespace BasicEmailQueueManager
                 mailMessage.CC.Add(ccAddress);
             }
 
-            _client.Send(mailMessage);
+            await _client.SendMailAsync(mailMessage);
         }
     }
 }
