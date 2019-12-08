@@ -14,8 +14,7 @@ namespace Playground
             var emailQueueManager = new EmailManager(
                 emailClient: new FakeEmailClient(),
                 emailQueueRepository: new SQLEmailQueueRepository(cs),
-                logger: new ConsoleLogger(),
-                configuration: new SQLConfiguration(cs));
+                logger: new ConsoleLogger());
 
             // Insert test email
             for (int i = 0; i < 100; ++i)
@@ -23,17 +22,19 @@ namespace Playground
                 await emailQueueManager.Enqueue(new BasicEmailQueueManager.Domain.NewEmail(
                     DateTimeOffset.Now,
                     DateTimeOffset.Now,
-                    "<body>sdsadsaa</body>",
+                    "<body>Test body</body>",
                     "Subject",
                     "from@test.it",
                     new string[] { "to1@test.it", "to2@test.it " },
                     null));
             }
 
+            // Send test emails
             Console.WriteLine("Sending emails...");
             await emailQueueManager.RunEmailProcessing(
-                CancellationToken.None,
-                100);
+                cancellationToken: CancellationToken.None,
+                emailNumberPerBatch: 100,
+                runInterval: TimeSpan.FromSeconds(30));
         }
     }
 }

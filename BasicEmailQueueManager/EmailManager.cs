@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
 namespace BasicEmailQueueManager
 {
     public class EmailManager
@@ -11,18 +12,15 @@ namespace BasicEmailQueueManager
         private readonly IEmailClient _emailClient;
         private readonly IEmailRepository _emailQueueRepository;
         private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
 
         public EmailManager(
             IEmailClient emailClient,
             IEmailRepository emailQueueRepository,
-            ILogger logger,
-            IConfiguration configuration)
+            ILogger logger)
         {
             _emailClient = emailClient ?? throw new ArgumentNullException(nameof(emailClient));
             _emailQueueRepository = emailQueueRepository ?? throw new ArgumentNullException(nameof(emailQueueRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -41,7 +39,8 @@ namespace BasicEmailQueueManager
         /// <returns></returns>
         public async Task RunEmailProcessing(
             CancellationToken cancellationToken,
-            int emailNumberPerBatch)
+            int emailNumberPerBatch,
+            TimeSpan runInterval)
         {
             while (true)
             {
@@ -59,7 +58,7 @@ namespace BasicEmailQueueManager
                     // Don't rethrow to keep the "service" running
                 }
 
-                await Task.Delay(_configuration.RunInterval, cancellationToken);
+                await Task.Delay(runInterval, cancellationToken);
             }
         }
 
