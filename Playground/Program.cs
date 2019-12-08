@@ -21,13 +21,13 @@ namespace Playground
             for (int i = 0; i < 100; ++i)
             {
                 await emailQueueManager.Enqueue(new BasicEmailQueueManager.Domain.NewEmail(
-                    DateTimeOffset.Now,
-                    DateTimeOffset.Now,
-                    "<body>Test body</body>",
-                    "Subject",
-                    "from@test.it",
-                    new string[] { "to1@test.it", "to2@test.it " },
-                    null));
+                    creationDate: DateTimeOffset.Now,
+                    lastUpdateDate: DateTimeOffset.Now,
+                    body: "<body>Test body</body>",
+                    subject: "Subject",
+                    from: "from@test.it",
+                    to: new string[] { "to1@test.it", "to2@test.it " },
+                    cc: null));
             }
 
             // Send test emails
