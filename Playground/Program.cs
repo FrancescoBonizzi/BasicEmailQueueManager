@@ -1,4 +1,5 @@
 ﻿using BasicEmailQueueManager;
+using BasicEmailQueueManager.SQLImplementation;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

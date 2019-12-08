@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using System;
 
-namespace BasicEmailQueueManager
+namespace BasicEmailQueueManager.SQLImplementation
 {
     public class CachedSQLConfiguration : IConfiguration
     {
@@ -71,15 +71,6 @@ namespace BasicEmailQueueManager
                 {
                     entry.AbsoluteExpirationRelativeToNow = _cacheDuration;
                     return _sqlConfiguration.Password;
-                });
-
-        public TimeSpan RunInterval => _cache
-            .GetOrCreate(
-                "RunInterval",
-                entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = _cacheDuration;
-                    return _sqlConfiguration.RunInterval;
                 });
     }
 }

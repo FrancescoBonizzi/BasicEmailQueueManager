@@ -4,7 +4,7 @@ using Dapper;
 using System;
 using System.Data.SqlClient;
 
-namespace BasicEmailQueueManager
+namespace BasicEmailQueueManager.SQLImplementation
 {
     public class SQLConfiguration : IConfiguration
     {
@@ -16,7 +16,6 @@ namespace BasicEmailQueueManager
         public int Port => ConvertToInt32(GetValueOrThrow("Port"));
         public string UserName => GetValueOrThrow("UserName");
         public string Password => GetValueOrThrow("Password");
-        public TimeSpan RunInterval => ConvertToTimeSpan(GetValueOrThrow("RunIntervalSeconds"));
 
         public SQLConfiguration(string connectionString)
         {

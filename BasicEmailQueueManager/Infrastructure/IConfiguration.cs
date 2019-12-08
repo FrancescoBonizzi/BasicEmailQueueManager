@@ -10,6 +10,5 @@ namespace BasicEmailQueueManager.Infrastructure
         int Port { get; }
         string UserName { get; }
         string Password { get; }
-        TimeSpan RunInterval { get; }
     }
 }
