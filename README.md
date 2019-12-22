@@ -40,7 +40,7 @@ await emailQueueManager.RunEmailProcessing(
 ```
 
 # Building
-Simply clone this repository and build the `BasicEmailQueueManager.sln` solution.
+Simply clone this repository and build the `BasicEmailQueueManager.sln` solution. Then, create a `SQL Server` database and run the `TSQL` script in the `Database` folder.
 
 # How to contribute
 - Report any issues
