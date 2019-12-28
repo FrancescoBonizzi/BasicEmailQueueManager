@@ -27,12 +27,12 @@ namespace BasicEmailQueueManager.SQLImplementation
 
                 await connection.OpenAsync();
                 return await connection.QueryAsync<Email>(
-                   @$"  UPDATE EmailQueueManager.Email
+                   @"   UPDATE EmailQueueManager.Email
                         SET [Status] = @processingStatus, LastUpdateDate = @lastUpdateDate
                         OUTPUT INSERTED.*
                         FROM 
                         (
-                            SELECT TOP {count} EmailId 
+                            SELECT TOP (@count) EmailId 
                             FROM EmailQueueManager.Email 
                             WHERE [Status] = @newStatus
                             ORDER BY EmailId ASC
@@ -42,7 +42,8 @@ namespace BasicEmailQueueManager.SQLImplementation
                    {
                        processingStatus = (byte)Statuses.Processing,
                        newStatus = (byte)Statuses.New,
-                       lastUpdateDate = DateTimeOffset.Now
+                       lastUpdateDate = DateTimeOffset.Now,
+                       count
                    });
             }
         }

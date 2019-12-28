@@ -11,7 +11,7 @@ namespace Playground
         public async Task Send(Email email)
         {
             await Task.Delay(200);
-            Console.WriteLine($"SENT! From: {email.From}, To: {email.To}, BodY: {email.Body}");
+            Console.WriteLine($"SENT! From: {email.From.Trim()}, To: {email.To.Trim()}, Body: {email.Body.Trim()}");
         }
     }
 }
