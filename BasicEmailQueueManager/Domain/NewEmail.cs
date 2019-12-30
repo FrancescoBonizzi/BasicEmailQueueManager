@@ -15,16 +15,14 @@ namespace BasicEmailQueueManager.Domain
         public string Cc { get; }
 
         public NewEmail(
-            DateTimeOffset creationDate,
-            DateTimeOffset lastUpdateDate,
             string body,
             string subject,
             string from,
             IEnumerable<string> to,
-            IEnumerable<string> cc)
+            IEnumerable<string> cc = null)
         {
-            CreationDate = creationDate;
-            LastUpdateDate = lastUpdateDate;
+            CreationDate = DateTimeOffset.Now;
+            LastUpdateDate = DateTimeOffset.Now;
             Body = body;
             Subject = subject;
             From = from;

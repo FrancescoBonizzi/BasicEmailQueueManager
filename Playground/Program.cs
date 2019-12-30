@@ -21,8 +21,6 @@ namespace Playground
             for (int i = 0; i < 100; ++i)
             {
                 await emailQueueManager.Enqueue(new BasicEmailQueueManager.Domain.NewEmail(
-                    creationDate: DateTimeOffset.Now,
-                    lastUpdateDate: DateTimeOffset.Now,
                     body: "<body>Test body</body>",
                     subject: "Subject",
                     from: "from@test.it",
