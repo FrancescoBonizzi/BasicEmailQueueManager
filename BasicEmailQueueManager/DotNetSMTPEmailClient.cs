@@ -42,7 +42,7 @@ namespace BasicEmailQueueManager
                 mailMessage.To.Add(toAddress);
             }
 
-            if (email.Cc != null)
+            if (!string.IsNullOrWhiteSpace(email.Cc))
             {
                 foreach (var ccAddress in email.Cc.Split(","))
                 {
