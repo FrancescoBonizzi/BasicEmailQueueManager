@@ -42,9 +42,12 @@ namespace BasicEmailQueueManager
                 mailMessage.To.Add(toAddress);
             }
 
-            foreach (var ccAddress in email.Cc.Split(","))
+            if (email.Cc != null)
             {
-                mailMessage.CC.Add(ccAddress);
+                foreach (var ccAddress in email.Cc.Split(","))
+                {
+                    mailMessage.CC.Add(ccAddress);
+                }
             }
 
             await _client.SendMailAsync(mailMessage);
